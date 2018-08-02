@@ -5,19 +5,31 @@ ONE_BALL = 1
 OUTCOME_FOR_WICKET = "Out"
 
 class Team:
-	batsmen = []
 	total_runs = 0
 	def __init__(self, name):
 		self.name = name
+		self.batsmen = []
 
 	def __str__(self):
 		return self.name
 
-	def createBatsman(self, player, name, weights):
-		player = Player(name, weights)
-		self.batsmen.append(player)
+	def createBatsmen(self, match):
+		self.batsmen = []
 		
-		return player
+		if(self.name == match.batting_team.name):
+			Kirat_Boli = Player("Kirat Boli" , [0.05, 0.10, 0.25, 0.10, 0.25, 0.01, 0.14, 0.10])
+			self.batsmen.append(Kirat_Boli)
+			N_S_Nodhi  = Player("N. S. Nodhi", [0.05, 0.15, 0.15, 0.10, 0.20, 0.01, 0.19, 0.15])
+			self.batsmen.append(N_S_Nodhi)
+
+		elif(self.name == match.bowling_team.name):
+			D_B_Vellyers = Player("D. B. Vellyers" , [0.05, 0.10, 0.25, 0.10, 0.25, 0.01, 0.14, 0.10])
+			self.batsmen.append(D_B_Vellyers)
+			H_Mamla      = Player("H. Mamla"       , [0.10, 0.15, 0.15, 0.10, 0.20, 0.01, 0.19, 0.10])
+			self.batsmen.append(H_Mamla)
+
+
+
 
 	def batFirst(self):
 		striker, non_striker = self.batsmen[0], self.batsmen[1]
