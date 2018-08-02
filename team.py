@@ -3,6 +3,8 @@ from player import Player
 BALLS = 6
 ONE_BALL = 1
 OUTCOME_FOR_WICKET = "Out"
+FIRST_INNINGS = 1
+SECOND_INNINGS = 2
 
 class Team:
 	total_runs = 0
@@ -16,12 +18,13 @@ class Team:
 	def createBatsmen(self, match):
 		self.batsmen = []
 		
+		#Creating players for Lengaburu
 		if(self.name == match.batting_team.name):
 			Kirat_Boli = Player("Kirat Boli" , [0.05, 0.10, 0.25, 0.10, 0.25, 0.01, 0.14, 0.10])
 			self.batsmen.append(Kirat_Boli)
 			N_S_Nodhi  = Player("N. S. Nodhi", [0.05, 0.15, 0.15, 0.10, 0.20, 0.01, 0.19, 0.15])
 			self.batsmen.append(N_S_Nodhi)
-
+		#Creating players for Enchai
 		elif(self.name == match.bowling_team.name):
 			D_B_Vellyers = Player("D. B. Vellyers" , [0.05, 0.10, 0.25, 0.10, 0.25, 0.01, 0.14, 0.10])
 			self.batsmen.append(D_B_Vellyers)
@@ -29,29 +32,7 @@ class Team:
 			self.batsmen.append(H_Mamla)
 
 
-
-
-	def batFirst(self):
-		striker, non_striker = self.batsmen[0], self.batsmen[1]
-		commentary = []
-		commentary.append(self.name + " innings : ")
-		for ball in range(1, BALLS+1):
-			outcome = striker.getOutcome()[0]
-			if outcome != OUTCOME_FOR_WICKET:
-				striker.addRuns(outcome)
-				striker.addBallsFaced(ONE_BALL)
-				self.total_runs += outcome
-				commentary.append("0."+str(ball)+" "+striker.name+" scored "+str(outcome))
-				if outcome%2 != 0:
-					striker, non_striker = non_striker, striker
-			else:
-				commentary.append("0."+str(ball)+" "+striker.name+" gets out. "+ self.name + " all out.")
-				striker.addBallsFaced(ONE_BALL)
-				striker.changeStatus("Out")
-				break
-		return self.total_runs, commentary
-
-	def chase(self, runs_required):
+	def bat(self, innings, runs_required=0):
 		striker, non_striker = self.batsmen[0], self.batsmen[1]
 		commentary = []
 		commentary.append("\n"+self.name + " innings : ")
@@ -63,7 +44,7 @@ class Team:
 				striker.addBallsFaced(ONE_BALL)
 				self.total_runs += outcome
 				commentary.append("0."+str(ball)+" "+striker.name+" scored "+str(outcome))
-				if self.total_runs > runs_required:
+				if innings == SECOND_INNINGS and self.total_runs > runs_required:
 					return "Win", commentary
 					match_won = True
 					break
@@ -74,14 +55,18 @@ class Team:
 				commentary.append("0."+str(ball)+" "+striker.name+" gets out. "+ self.name + " all out.")
 				striker.addBallsFaced(ONE_BALL)
 				striker.changeStatus("Out")
-				if runs_required == self.total_runs:
+				if innings == FIRST_INNINGS:
+					break
+				elif innings == SECOND_INNINGS and runs_required == self.total_runs:
 					return "It's another tie ! ", commentary
-				elif not match_won:
+				elif innings == SECOND_INNINGS and not match_won:
 					return "Lost", commentary
 
-		if runs_required == self.total_runs:
+		if innings == FIRST_INNINGS:
+			return self.total_runs, commentary
+		elif innings == SECOND_INNINGS and runs_required == self.total_runs:
 			return "It's another tie ! ", commentary
-		elif not match_won:
+		elif innings == SECOND_INNINGS and not match_won:
 			return "Lost", commentary
 
 	def printSummary(self):
